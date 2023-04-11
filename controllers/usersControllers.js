@@ -1,8 +1,9 @@
 require('dotenv').config();
-const { NODE_ENV, JWT_SECRET } = process.env;
 
+const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const jwtSecret = require('../utils/configs');
 const UserSchema = require('../models/user');
 
 const { Conflict } = require('../Errors/Conflict');
@@ -34,25 +35,27 @@ function register(req, res, next) {
         next(err);
       }
     });
-};
+}
 
 // логин
 function login(req, res, next) {
   const { email, password } = req.body;
 
   return UserSchema.findUserByCredentials({ email, password })
-    .then((user) =>{
-      const token = jwt.sign({ _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
-        { expiresIn: '7d' });
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : jwtSecret,
+        { expiresIn: '7d' },
+      );
       res.send({ token });
     })
     .catch(next);
-};
+}
 
 // получение пользователя
 function getUser(req, res, next) {
-  const id = req.user._id;   //ПОЧЕМУ-ТО НЕ МОЖЕТ ПРОЧЕСТЬ. ИНДЕФ
+  const id = req.user._id; // ПОЧЕМУ-ТО НЕ МОЖЕТ ПРОЧЕСТЬ. ИНДЕФ
   UserSchema.findById(id)
     .then((user) => {
       if (!user) {
@@ -67,10 +70,10 @@ function getUser(req, res, next) {
 
 // изменение информации о пользователе
 function patchUserInfo(req, res, next) {
-  const { email, name } =req.body;
+  const { email, name } = req.body;
   UserSchema.findByIdAndUpdate(
     req.user._id,
-    {email, name},
+    { email, name },
     { new: true, runValidators: true },
   )
     .then((user) => {
@@ -86,11 +89,11 @@ function patchUserInfo(req, res, next) {
         next();
       }
     });
-};
+}
 
 module.exports = {
   register,
   login,
   getUser,
   patchUserInfo,
-}
+};

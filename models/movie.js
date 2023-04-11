@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-const { LINK_SCHEME } =require('../utils/constants')
+const { LINK_SCHEME } = require('../utils/constants');
 
 const MovieSchema = new mongoose.Schema({
   // основная информация о фильме

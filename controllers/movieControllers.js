@@ -37,32 +37,32 @@ function createMovie(req, res, next) {
         next();
       }
     });
-};
+}
 
 // удаление фильма из сохраненок по id
 function deleteMovie(req, res, next) {
   const id = req.params._id;
   MovieSchema.findById(id)
-  .then((movie) => {
-    if (!movie) {
-      next(new NotFoundError('Карточка с указанным _id не найдена'));
-      return;
-    }
-    if (movie.owner.valueOf() !== req.user._id) {
-      next(new Forbidden('Нельзя удалять чужие карточки'));
-      return;
-    }
-    MovieSchema.findByIdAndRemove(id)
-      .then(() => res.send({ message: 'Карточка успешно удалена' }))
-      .catch();
-  })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      next(new CastError('Переданы некорректные данные _id пользователя'));
-    } else {
-      next();
-    }
-  });
+    .then((movie) => {
+      if (!movie) {
+        next(new NotFoundError('Фильм с указанным _id не найден'));
+        return;
+      }
+      if (movie.owner.valueOf() !== req.user._id) {
+        next(new Forbidden('Нельзя удалять чужие фильмы'));
+        return;
+      }
+      MovieSchema.findByIdAndRemove(id)
+        .then(() => res.send({ message: 'Фильм успешно удален' }))
+        .catch();
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new CastError('Переданы некорректные данные _id пользователя'));
+      } else {
+        next();
+      }
+    });
   // ФИГОВО РАБОТАЕТ. НУЖНО ЛУЧШЕ ИЗУЧИТЬ deleteOne
 //   MovieSchema.deleteOne(id)
 //     .then(() => res.send({ message: 'Фильм успешно удален' }))
@@ -81,4 +81,4 @@ module.exports = {
   getMovies,
   createMovie,
   deleteMovie,
-}
+};
