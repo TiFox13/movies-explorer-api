@@ -59,11 +59,11 @@ const MovieSchema = new mongoose.Schema({
   // id пользователя, сохранившего фильм и id фильма в базе
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    // ref:'user',
+    ref: 'user',
     required: true,
   },
   movieId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Number,
     required: true,
   },
 

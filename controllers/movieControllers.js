@@ -10,9 +10,7 @@ function getMovies(req, res, next) {
     .catch(next);
 }
 
-// создает фильм с переданными в теле
-// country, director, duration, year, description,
-// image, trailer, nameRU, nameEN и thumbnail, movieId
+// создание фильма
 function createMovie(req, res, next) {
   MovieSchema.create({
     country: req.body.country,
@@ -25,8 +23,7 @@ function createMovie(req, res, next) {
     nameRU: req.body.nameRU,
     nameEN: req.body.nameEN,
     thumbnail: req.body.thumbnail,
-
-    movieId: req.user._id, // пока такое, но вообще не это нужно
+    movieId: req.body.movieId, // пока такое, но вообще не это нужно
     owner: req.user._id,
   })
     .then((movie) => res.status(201).send(movie))
@@ -63,18 +60,6 @@ function deleteMovie(req, res, next) {
         next();
       }
     });
-  // ФИГОВО РАБОТАЕТ. НУЖНО ЛУЧШЕ ИЗУЧИТЬ deleteOne
-//   MovieSchema.deleteOne(id)
-//     .then(() => res.send({ message: 'Фильм успешно удален' }))
-// // СЮДА НАДО ПРИДУМАТЬ, КАК ДОБАВИТЬ ОТЛАВЛИВАНИЕ СИТУАЦИИ, КОГДА ФИЛЬМ ПО ID НЕ НАШЛИ
-// // А ЕЩЕ НУЖНА ПРОВЕРКА, ЯВЛЯЕТСЯ ЛИ ПОЛЬЗОВАТЕЛЬ СОЗДАТЕЛЕМ
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         next(new CastError('Переданы некорректные данные _id пользователя'));
-//       } else {
-//         next();
-//       }
-//     })
 }
 
 module.exports = {
