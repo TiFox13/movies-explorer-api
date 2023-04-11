@@ -16,7 +16,7 @@ router.post('/signin', loginValidation, login);
 
 // основные роуты
 router.use('/users', auth, usersRouter);
-router.use('/movie', auth, movieRouter);
+router.use('/movies', auth, movieRouter);
 
 router.use('*', (req, res, next) => {
   next(new NotFoundError('Страницы по данному адресу не существует'));
