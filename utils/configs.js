@@ -5,3 +5,4 @@ module.exports = {
   MONGO_DEV,
   JWT_SECRET_DEV,
 };
+
