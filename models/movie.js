@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { LINK_SCHEME } = require('../utils/constants');
+const { LINK_SCHEME, incorrectLink } = require('../utils/constants');
 
 const MovieSchema = new mongoose.Schema({
   // основная информация о фильме
@@ -32,7 +32,7 @@ const MovieSchema = new mongoose.Schema({
       validator(v) {
         return LINK_SCHEME.test(v);
       },
-      message: 'Некорректный формат ссылки',
+      message: incorrectLink,
     },
   },
   trailerLink: {
@@ -42,7 +42,7 @@ const MovieSchema = new mongoose.Schema({
       validator(v) {
         return LINK_SCHEME.test(v);
       },
-      message: 'Некорректный формат ссылки',
+      message: incorrectLink,
     },
   },
   thumbnail: {
@@ -52,7 +52,7 @@ const MovieSchema = new mongoose.Schema({
       validator(v) {
         return LINK_SCHEME.test(v);
       },
-      message: 'Некорректный формат ссылки',
+      message: incorrectLink,
     },
   },
 

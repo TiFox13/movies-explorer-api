@@ -2,10 +2,18 @@ const MovieSchema = require('../models/movie');
 const { NotFoundError } = require('../Errors/NotFoundError');
 const { CastError } = require('../Errors/CastError');
 const { Forbidden } = require('../Errors/Forbidden');
+const {
+  incorrectData,
+  notFound,
+  notOwnerError,
+  responseToDeletion,
+  incorrectMovieId,
+} = require('../utils/constants');
 
-// получение всех сохраненных пользователем фильмов
+// получение всех сохраненных ПОЛЬЗОВАТЕЛЕМ фильмов
+// т.е это фильмы у которых "создатель" это наш юзер. логично? логично!
 function getMovies(req, res, next) {
-  return MovieSchema.find({})
+  return MovieSchema.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch(next);
 }
@@ -29,9 +37,9 @@ function createMovie(req, res, next) {
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new CastError('Переданы некорректные данные при создании фильма'));
+        next(new CastError(`${incorrectData} фильма`));
       } else {
-        next();
+        next(err);
       }
     });
 }
@@ -42,22 +50,22 @@ function deleteMovie(req, res, next) {
   MovieSchema.findById(id)
     .then((movie) => {
       if (!movie) {
-        next(new NotFoundError('Фильм с указанным _id не найден'));
+        next(new NotFoundError(`Фильм ${notFound}`));
         return;
       }
       if (movie.owner.valueOf() !== req.user._id) {
-        next(new Forbidden('Нельзя удалять чужие фильмы'));
+        next(new Forbidden(notOwnerError));
         return;
       }
       MovieSchema.findByIdAndRemove(id)
-        .then(() => res.send({ message: 'Фильм успешно удален' }))
-        .catch();
+        .then(() => res.send({ message: responseToDeletion }))
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new CastError('Переданы некорректные данные _id пользователя'));
+        next(new CastError(incorrectMovieId));
       } else {
-        next();
+        next(err);
       }
     });
 }

@@ -5,7 +5,7 @@ const { registerValidation, loginValidation } = require('../middlewares/validati
 const usersRouter = require('./users');
 const movieRouter = require('./movies');
 const { NotFoundError } = require('../Errors/NotFoundError');
-
+const { urlNotFound } = require('../utils/constants');
 const { register, login } = require('../controllers/usersControllers');
 
 // регистрация
@@ -18,8 +18,8 @@ router.post('/signin', loginValidation, login);
 router.use('/users', auth, usersRouter);
 router.use('/movies', auth, movieRouter);
 
-router.use('*', (req, res, next) => {
-  next(new NotFoundError('Страницы по данному адресу не существует'));
+router.use('*', auth, (req, res, next) => {
+  next(new NotFoundError(urlNotFound));
 });
 
 module.exports = router;

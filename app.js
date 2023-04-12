@@ -1,29 +1,21 @@
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParse = require('body-parser');
-
-const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
+const limiter = require('./utils/limiter');
 const errorHandler = require('./middlewares/error');
 const router = require('./routes/index');
-const { db } = require('./utils/configs');
+
+const { NODE_ENV, MONGO } = process.env;
+const { MONGO_DEV } = require('./utils/configs');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-mongoose.connect(db, {
+mongoose.connect(NODE_ENV === 'production' ? MONGO : MONGO_DEV, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // за 15 минут
-  max: 100, // можно совершить максимум 100 запросов с одного IP
-  message:
-    'С вашего IP адреса совершено слишком много запросов. Пожалуйста, попробуйте снова через 15 минут',
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
 const app = express();
