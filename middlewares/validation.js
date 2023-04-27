@@ -18,12 +18,10 @@ const idValidation = celebrate({
 });
 
 // валидация полей user
-// пользователь может захотеть поменять только имя или только почту,
-// поэтому уберу required
 const userValidation = celebrate({
   [Segments.BODY]: Joi.object().keys({
-    email: Joi.string().email(),
-    name: Joi.string().min(2).max(30),
+    email: Joi.string().email().required(),
+    name: Joi.string().min(2).max(30).required(),
   }),
 });
 

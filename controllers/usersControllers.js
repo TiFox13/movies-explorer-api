@@ -99,7 +99,7 @@ function patchUserInfo(req, res, next) {
             }
           });
       } else {
-        next(new CastError(duplicateEmailError));
+        next(new Conflict(duplicateEmailError));
       }
     })
     .catch(next);
