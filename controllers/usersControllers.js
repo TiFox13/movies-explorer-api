@@ -77,32 +77,24 @@ function getUser(req, res, next) {
 // изменение информации о пользователе
 function patchUserInfo(req, res, next) {
   const { email, name } = req.body;
-  UserSchema.findOne({ email })
-    .then((data) => {
-      if (data === null) {
-        UserSchema.findByIdAndUpdate(
-          req.user._id,
-          { email, name },
-          { new: true, runValidators: true },
-        )
-          .then((user) => {
-            if (!user) {
-              return next(new NotFoundError(`Пользователь ${notFound}`));
-            }
-            return res.send(user);
-          })
-          .catch((err) => {
-            if (err.name === 'ValidationError') {
-              next(new CastError(incorrectEditingData));
-            } else {
-              next(err);
-            }
-          });
+  UserSchema.findByIdAndUpdate(
+    req.user._id,
+    { email, name },
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError(`Пользователь ${notFound}`));
+      }
+      return res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new CastError(incorrectEditingData));
       } else {
-        next(new Conflict(duplicateEmailError));
+        next(err);
       }
     })
-    .catch(next);
 }
 
 module.exports = {

@@ -28,7 +28,7 @@ app.use(requestLogger);
 
 app.use(cors());
 app.use(helmet());
-app.use(limiter); // подключили лимитер
+// app.use(limiter); // подключили лимитер
 
 app.use(router);
 
